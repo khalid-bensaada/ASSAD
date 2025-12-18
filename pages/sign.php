@@ -27,7 +27,7 @@ if (isset($_POST['sign'])) {
         $conn->query("INSERT INTO assad_users (username,email,user_role,password_hash) VALUES ('$name,$email,$role,$password')");
     }
 
-    header("Location: visitor.php");
+    header("Location: login.php");
     exit();
 }
 

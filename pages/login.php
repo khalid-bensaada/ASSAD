@@ -1,3 +1,20 @@
+<?php
+session_start();
+$servername = "localhost";
+$username = "root";
+$password = "";
+$db = "assad";
+
+$conn = new mysqli($servername, $username, $password, $db);
+
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+} else {
+    echo "Connected successfully";
+}
+
+?>
 <!DOCTYPE html>
 
 <html class="dark" lang="en">
@@ -61,11 +78,10 @@
                     </div>
                     <span class="text-lg font-bold tracking-tight">Zoo ASSAD</span>
                 </div>
-                
+
                 <!-- CTA -->
                 <div class="flex items-center gap-4">
-                    <button
-                        class="hidden sm:flex text-sm font-medium hover:text-primary transition-colors">
+                    <button class="hidden sm:flex text-sm font-medium hover:text-primary transition-colors">
                         <a href="index.php">Home</a>
                     </button>
                     <a class="flex items-center justify-center h-10 px-6 rounded-full bg-primary text-background-dark text-sm font-bold hover:brightness-110 transition-all"
@@ -154,7 +170,7 @@
                         <p class="text-gray-400 text-sm">Log in to your Zoo ASSAD account</p>
                     </div>
                     <!-- Form Section -->
-                    <form class="space-y-5 relative z-10"
+                    <form class="space-y-5 relative z-10" method="POST"
                         onsubmit="event.preventDefault(); alert('Welcome to Zoo ASSAD!');">
                         <!-- Email Input -->
                         <div class="space-y-2">
@@ -190,7 +206,7 @@
                         <!-- Submit Button -->
                         <button
                             class="w-full bg-primary hover:bg-green-400 text-background-dark font-bold py-4 rounded-xl shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all transform hover:-translate-y-0.5 mt-2 flex items-center justify-center gap-2 group/btn"
-                            type="submit">
+                            name="login" type="submit">
                             <span>Sign In securely</span>
                             <span
                                 class="material-symbols-outlined text-lg group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
@@ -249,8 +265,8 @@
             </div>
         </div>
     </main>
-    
-    
+
+
 </body>
 
 </html>
