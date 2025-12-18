@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 $servername = "localhost";
 $username = "root";
@@ -11,33 +12,36 @@ $conn = new mysqli($servername, $username, $password, $db);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 } else {
-    echo "Connected successfully";
-}
-if (isset($_POST['login'])) {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+    if (isset($_POST['login'])) {
+        $email = $_POST['email'];
+        $password = $_POST['password'];
 
-    $result = $conn->query("SELECT * FROM assad_users WHERE email = $email");
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-        if (password_verify($password, $user['password'])) {
-            $_SESSION['name'] = $user['name'];
-            $_SESSION['email'] = $user['email'];
+        $result = $conn->query("SELECT * FROM assad_users WHERE email = '$email'");
+        if ($result->num_rows > 0) {
+            $user = $result->fetch_assoc();
+            if (password_verify($password, $user['password'])) {
+                $_SESSION['name'] = $user['name'];
+                $_SESSION['email'] = $user['email'];
 
-            if ($user['role'] === 'admin') {
-                header("Location : admin.php");
-            } else {
-                header("Location : dign.php");
+                if ($user['role'] === 'admin') {
+                    header("Location: admin.php");
+                } elseif ($user['role'] === 'visiteur') {
+                    header("Location: visitor.php");
+                } elseif ($user['role'] === 'guide') {
+                    header("Location: tours.php");
+                }
+                exit();
             }
-            exit();
-        }
 
+        }
+        $_SESSION['login_error'] = 'Incorrect email or password';
+        $_SESSION['active'] = 'seccefuly login';
+        header("Location: admin.php");
+        exit();
     }
-    $_SESSION['login_error'] = 'Incorrect email or password';
-    $_SESSION['active'] = 'seccefuly login';
-    header("Location : visitor.php");
-    exit();
 }
+
+
 ?>
 <!DOCTYPE html>
 
@@ -194,8 +198,7 @@ if (isset($_POST['login'])) {
                         <p class="text-gray-400 text-sm">Log in to your Zoo ASSAD account</p>
                     </div>
                     <!-- Form Section -->
-                    <form class="space-y-5 relative z-10" method="POST"
-                        onsubmit="event.preventDefault(); alert('Welcome to Zoo ASSAD!');">
+                    <form class="space-y-5 relative z-10" method="POST">
                         <!-- Email Input -->
                         <div class="space-y-2">
                             <label class="text-sm font-medium text-gray-300 ml-1" for="email">Email Address</label>
