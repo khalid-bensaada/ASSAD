@@ -19,6 +19,14 @@ if (isset($_POST['sign'])) {
     $password = password_hash($_POST["password"]);
     $role = $_POST["role"];
 
+    $check = $conn->query("SELECT email FROM assad_users WHERE email ='$email");
+    if ($check->num_rows > 0) {
+        $_SESSION['sign_error'] = 'Email is already signed';
+        $_SESSION['active'] = 'seccefully sign up';
+    } else {
+        $conn->query("INSERT INTO assad_users (username,email,user_role,password_hash) VALUES ('$name,$email,$role,$password')");
+    }
+
     
 }
 
