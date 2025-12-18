@@ -1,3 +1,20 @@
+<?php
+session_start();
+$servername = "localhost";
+$username = "root";
+$password = "";
+$db = "assad";
+
+$conn = new mysqli($servername, $username, $password, $db);
+
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+} else {
+    echo "Connected successfully";
+}
+
+?>
 <!DOCTYPE html>
 
 <html class="dark" lang="en">
@@ -104,7 +121,8 @@
                     <h2 class="text-3xl font-bold text-white">Create Account</h2>
                     <p class="text-text-muted">Enter your details to register as a new member.</p>
                 </div>
-                <form action="#" class="flex flex-col gap-5" onsubmit="alert('Registration Simulated!'); return false;">
+                <form action="#" class="flex flex-col gap-5" method="POST"
+                    onsubmit="alert('Registration Simulated!'); return false;">
                     <!-- Role Selector -->
                     <div class="flex flex-col gap-2">
                         <label class="text-white text-sm font-medium ml-1">I am registering as a</label>
@@ -131,14 +149,14 @@
                         <label class="text-white text-sm font-medium ml-1" for="fullname">Full Name</label>
                         <input
                             class="form-input w-full h-12 px-4 rounded-xl bg-surface-dark border border-border-dark text-white placeholder-text-muted focus:border-primary focus:ring-1 focus:ring-primary transition-colors text-base"
-                            id="fullname" placeholder="Enter your full name" type="text" />
+                            id="fullname" name="username" placeholder="Enter your full name" type="text" />
                     </div>
                     <!-- Email -->
                     <div class="flex flex-col gap-2">
                         <label class="text-white text-sm font-medium ml-1" for="email">Email Address</label>
                         <input
                             class="form-input w-full h-12 px-4 rounded-xl bg-surface-dark border border-border-dark text-white placeholder-text-muted focus:border-primary focus:ring-1 focus:ring-primary transition-colors text-base"
-                            id="email" placeholder="name@example.com" type="email" />
+                            id="email" name="email" placeholder="name@example.com" type="email" />
                     </div>
                     <!-- Password -->
                     <div class="flex flex-col gap-2">
@@ -146,7 +164,7 @@
                         <div class="relative flex items-center">
                             <input
                                 class="form-input w-full h-12 pl-4 pr-12 rounded-xl bg-surface-dark border border-border-dark text-white placeholder-text-muted focus:border-primary focus:ring-1 focus:ring-primary transition-colors text-base"
-                                id="password" placeholder="Create a secure password" type="password" />
+                                id="password" name="password" placeholder="Create a secure password" type="password" />
                             <button
                                 class="absolute right-4 text-text-muted hover:text-white transition-colors flex items-center justify-center"
                                 type="button">
@@ -157,7 +175,7 @@
                     <!-- Submit Button -->
                     <button
                         class="mt-4 w-full h-12 bg-primary hover:bg-[#2dc468] text-[#111714] text-base font-bold rounded-full transition-all transform active:scale-[0.98] shadow-[0_0_15px_rgba(54,226,123,0.3)] hover:shadow-[0_0_25px_rgba(54,226,123,0.5)]"
-                        type="submit">
+                        name="sign" type="submit">
                         Sign Up Now
                     </button>
                     <!-- Footer Link -->
