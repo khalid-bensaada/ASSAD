@@ -13,6 +13,14 @@ if ($conn->connect_error) {
 } else {
     echo "Connected successfully";
 }
+if (isset($_POST['sign'])) {
+    $name = $_POST["username"];
+    $email = $_POST["email"];
+    $password = password_hash($_POST["password"]);
+    $role = $_POST["role"];
+
+    
+}
 
 ?>
 <!DOCTYPE html>
