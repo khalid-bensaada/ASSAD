@@ -35,7 +35,7 @@ if ($conn->connect_error) {
                 } elseif ($user['user_role'] === 'visiteur') {
                     header("Location: visitor.php");
                 } elseif ($user['user_role'] === 'guide') {
-                    header("Location: tours.php");
+                    header("Location: visitor.php");
                 }
                 exit();
             }

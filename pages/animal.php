@@ -1,3 +1,43 @@
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "zoo";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $nom = $_POST['nam'];
+    $type = $_POST['food'];
+    $habitat = intval($_POST['habitats']);
+
+    if (isset($_FILES['img']) && $_FILES['img']['name'] != "") {
+        $image = $_FILES['img']['name'];
+        move_uploaded_file($_FILES['img']['tmp_name'], "images/" . $image);
+    } else {
+        $image = "";
+    }
+
+    $stmt = $conn->prepare("INSERT INTO Animal (Name_animal, Type_food, Image_animal, Habitat_ID) 
+                            VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("sssi", $nom, $type, $image, $habitat);
+    $stmt->execute();
+}
+
+
+$sql = "SELECT a.ID, a.Name_animal, a.Type_food, a.Image_animal, h.Name_Hab AS habitat_name
+        FROM Animal a
+        LEFT JOIN habitats h ON a.Habitat_ID = h.ID_Hab
+        ORDER BY a.Name_animal ASC";
+
+$result = mysqli_query($conn, $sql);
+
+?>
+
 <!DOCTYPE html>
 
 <html class="dark" lang="en">
@@ -74,13 +114,13 @@
             <div class="flex items-center gap-6">
                 <nav class="hidden md:flex items-center gap-6">
                     <a class="text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-300 dark:hover:text-primary transition-colors"
-                        href="#">Home</a>
+                        href="visitor.php">Home</a>
                     <a class="text-sm font-medium text-gray-900 dark:text-white font-bold border-b-2 border-primary"
-                        href="#">Animals</a>
+                        href="animal.php">Animals</a>
                     <a class="text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-300 dark:hover:text-primary transition-colors"
-                        href="#">Map</a>
+                        href="animal_detials.php">Detials</a>
                     <a class="text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-300 dark:hover:text-primary transition-colors"
-                        href="#">Events</a>
+                        href="tours.php">Tours</a>
                 </nav>
                 <button
                     class="flex items-center justify-center rounded-full bg-primary px-5 py-2 text-sm font-bold text-[#112117] transition-all hover:bg-primary-hover hover:scale-105 shadow-[0_0_15px_rgba(54,226,123,0.3)]">

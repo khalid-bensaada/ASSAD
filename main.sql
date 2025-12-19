@@ -106,5 +106,5 @@ VALUES (
   
 );
 
-
+ALTER TABLE commentes CHANGE id_comment id INT ;
 

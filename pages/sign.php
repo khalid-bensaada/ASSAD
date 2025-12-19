@@ -28,19 +28,19 @@ if ($conn->connect_error) {
             $erreurs['email_error'] = "L'adresse email n'est pas valide (format attendu: nom@exemple.com).";
         }
 
-        $check = $conn->query("SELECT email FROM assad_users WHERE email ='$email");
+        $check = $conn->query("SELECT email FROM assad_users WHERE email ='$email'");
         if ($check->num_rows > 0) {
             $erreurs['email_existe'] = 'Email et déja existe';
         }
         if (empty($erreurs)) {
 
-            $stmt = $conn->prepare("INSERT INTO assad_users (username,email ,password_hash,user_role,actif)
+            $stmt = $conn->prepare("INSERT INTO assad_users (username,email ,user_role,password_hash,actif)
             VALUES (?,?,?,?,?)");
             $actif = 1;
             if ($role === 'guide') {
                 $actif = 0;
             }
-            $stmt->bind_param('sssis', $name, $password, $email, $role, $actif);
+            $stmt->bind_param('sssis', $name, $email,$role,$password,   $actif);
             $stmt->execute();
             $_SESSION['success'] = "Inscription réussie ! Connectez-vous.";
             $_SESSION['form_active'] = 'login-form';
