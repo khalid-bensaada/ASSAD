@@ -11,48 +11,50 @@ $conn = new mysqli($servername, $username, $password, $db);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 } else {
-    echo "Connected successfully";
-}
-if (isset($_POST['sign'])) {
-    $erreurs = [];
-    $name = $_POST["username"];
-    $email = $_POST["email"];
-    $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
-    $role = $_POST["role"];
+    if (isset($_POST['sign'])) {
+        $erreurs = [];
+        $name = $_POST["username"];
+        $email = $_POST["email"];
 
-    $pattern_email = "/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/";
-
-    if (!preg_match($pattern_email, $email)) {
-        $erreurs['email_error'] = "L'adresse email n'est pas valide (format attendu: nom@exemple.com).";
-    }
-    if (strlen($password) < 6) {
-        $erreurs['password_error'] = "Le mot de passe doit faire au moins 6 caractères.";
-    }
-    $check = $conn->query("SELECT email FROM assad_users WHERE email ='$email");
-    if ($ckeck->num_rows > 0) {
-        $erreurs['email_existe'] = 'Email et déja existe';
-    }
-    if (empty($erreurs)) {
-        $password_hache = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $connexion->prepare("INSERT INTO assad_users (username,email ,password_hash,user_role,actif)
-            VALUES (?,?,?,?,?)");
-        $actif = 'active';
-        if ($role === 'guide') {
-            $actif= 'en_attend';
+        $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
+        if (strlen($password) < 6) {
+            $erreurs['password_error'] = "Le mot de passe doit faire au moins 6 caractères.";
         }
-        $stmt->bind_param('sssss', $name, $password, $email, $role,$actif);
-        $stmt->execute();
-        $_SESSION['success'] = "Inscription réussie ! Connectez-vous.";
-        $_SESSION['form_active'] = 'login-form';
-        header('Location: login.php');
-        exit();
-    } else {
-        $_SESSION['register_errors'] = $erreurs;
-        $_SESSION['form_active'] = 's-inscrire-form';
-        header('Location: sign.php');
-        exit();
+        $role = $_POST["user_role"];
+
+        $pattern_email = "/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/";
+
+        if (!preg_match($pattern_email, $email)) {
+            $erreurs['email_error'] = "L'adresse email n'est pas valide (format attendu: nom@exemple.com).";
+        }
+
+        $check = $conn->query("SELECT email FROM assad_users WHERE email ='$email");
+        if ($check->num_rows > 0) {
+            $erreurs['email_existe'] = 'Email et déja existe';
+        }
+        if (empty($erreurs)) {
+
+            $stmt = $conn->prepare("INSERT INTO assad_users (username,email ,password_hash,user_role,actif)
+            VALUES (?,?,?,?,?)");
+            $actif = 1;
+            if ($role === 'guide') {
+                $actif = 0;
+            }
+            $stmt->bind_param('sssis', $name, $password, $email, $role, $actif);
+            $stmt->execute();
+            $_SESSION['success'] = "Inscription réussie ! Connectez-vous.";
+            $_SESSION['form_active'] = 'login-form';
+            header('Location: login.php');
+            exit();
+        } else {
+            $_SESSION['register_errors'] = $erreurs;
+            $_SESSION['form_active'] = 's-inscrire-form';
+            header('Location: sign.php');
+            exit();
+        }
     }
 }
+
 
 ?>
 <!DOCTYPE html>
@@ -161,22 +163,21 @@ if (isset($_POST['sign'])) {
                     <h2 class="text-3xl font-bold text-white">Create Account</h2>
                     <p class="text-text-muted">Enter your details to register as a new member.</p>
                 </div>
-                <form action="#" class="flex flex-col gap-5" method="POST"
-                    onsubmit="alert('Registration Simulated!'); return false;">
+                <form action="#" class="flex flex-col gap-5" method="POST">
                     <!-- Role Selector -->
                     <div class="flex flex-col gap-2">
                         <label class="text-white text-sm font-medium ml-1">I am registering as a</label>
                         <div
                             class="grid grid-cols-2 p-1 bg-surface-dark border border-border-dark rounded-full relative">
                             <label class="cursor-pointer relative z-10">
-                                <input checked="" class="peer sr-only" name="role" type="radio" value="visitor" />
+                                <input checked="" class="peer sr-only" name="user_role" type="radio" value="visiteur" />
                                 <div
                                     class="w-full py-2.5 text-center text-sm font-bold text-text-muted rounded-full transition-all peer-checked:bg-primary peer-checked:text-[#111714] peer-checked:shadow-lg">
                                     Visitor
                                 </div>
                             </label>
                             <label class="cursor-pointer relative z-10">
-                                <input class="peer sr-only" name="role" type="radio" value="guide" />
+                                <input class="peer sr-only" name="user_role" type="radio" value="guide" />
                                 <div
                                     class="w-full py-2.5 text-center text-sm font-bold text-text-muted rounded-full transition-all peer-checked:bg-primary peer-checked:text-[#111714] peer-checked:shadow-lg">
                                     Guide
