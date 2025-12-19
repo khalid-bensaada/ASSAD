@@ -16,7 +16,7 @@ if ($conn->connect_error) {
 if (isset($_POST['sign'])) {
     $name = $_POST["username"];
     $email = $_POST["email"];
-    $password = password_hash($_POST["password"]);
+    $password = password_hash($_POST["password"],PASSWORD_DEFAULT);
     $role = $_POST["role"];
 
     $check = $conn->query("SELECT email FROM assad_users WHERE email ='$email");

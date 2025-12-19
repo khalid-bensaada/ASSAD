@@ -21,7 +21,7 @@ if ($conn->connect_error) {
             $user = $result->fetch_assoc();
             
             if ($user['user_role'] === 'admin') {
-                $password_bd_hash = md5($user['password_hash']);
+                $password_bd_hash = password_hash($user['password_hash'],PASSWORD_DEFAULT);
                 
             } else {
                 $password_bd_hash = $user['password_hash'];
@@ -43,7 +43,7 @@ if ($conn->connect_error) {
         }
         $_SESSION['login_error'] = 'Incorrect email or password';
         $_SESSION['active'] = 'seccefuly login';
-        header("Location: index.php?error");
+        header("Location: login.php");
         exit();
     }
 }
