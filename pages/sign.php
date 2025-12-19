@@ -14,6 +14,7 @@ if ($conn->connect_error) {
     echo "Connected successfully";
 }
 if (isset($_POST['sign'])) {
+    $erreurs = [];
     $name = $_POST["username"];
     $email = $_POST["email"];
     $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
@@ -28,15 +29,29 @@ if (isset($_POST['sign'])) {
         $erreurs['password_error'] = "Le mot de passe doit faire au moins 6 caractères.";
     }
     $check = $conn->query("SELECT email FROM assad_users WHERE email ='$email");
-    if ($check->num_rows > 0) {
-        $_SESSION['sign_error'] = 'Email is already signed';
-        $_SESSION['active'] = 'seccefully sign up';
-    } else {
-        $conn->query("INSERT INTO assad_users (username,email,user_role,password_hash) VALUES ('$name,$email,$role,$password')");
+    if ($ckeck->num_rows > 0) {
+        $erreurs['email_existe'] = 'Email et déja existe';
     }
-
-    header("Location: sign.php");
-    exit();
+    if (empty($erreurs)) {
+        $password_hache = password_hash($password, PASSWORD_DEFAULT);
+        $stmt = $connexion->prepare("INSERT INTO assad_users (username,email ,password_hash,user_role,actif)
+            VALUES (?,?,?,?,?)");
+        $actif = 'active';
+        if ($role === 'guide') {
+            $actif= 'en_attend';
+        }
+        $stmt->bind_param('sssss', $name, $password, $email, $role,$actif);
+        $stmt->execute();
+        $_SESSION['success'] = "Inscription réussie ! Connectez-vous.";
+        $_SESSION['form_active'] = 'login-form';
+        header('Location: login.php');
+        exit();
+    } else {
+        $_SESSION['register_errors'] = $erreurs;
+        $_SESSION['form_active'] = 's-inscrire-form';
+        header('Location: sign.php');
+        exit();
+    }
 }
 
 ?>
