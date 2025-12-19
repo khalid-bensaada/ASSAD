@@ -19,15 +19,22 @@ if ($conn->connect_error) {
         $result = $conn->query("SELECT * FROM assad_users WHERE email = '$email'");
         if ($result->num_rows > 0) {
             $user = $result->fetch_assoc();
-            if (password_verify($password, $user['password'])) {
-                $_SESSION['name'] = $user['name'];
+            
+            if ($user['user_role'] === 'admin') {
+                $password_bd_hash = md5($user['password_hash']);
+                
+            } else {
+                $password_bd_hash = $user['password_hash'];
+            }
+            if (password_verify($password, $password_bd_hash)) {
+                $_SESSION['name'] = $user['username'];
                 $_SESSION['email'] = $user['email'];
 
-                if ($user['role'] === 'admin') {
+                if ($user['user_role'] === 'admin') {
                     header("Location: admin.php");
-                } elseif ($user['role'] === 'visiteur') {
+                } elseif ($user['user_role'] === 'visiteur') {
                     header("Location: visitor.php");
-                } elseif ($user['role'] === 'guide') {
+                } elseif ($user['user_role'] === 'guide') {
                     header("Location: tours.php");
                 }
                 exit();
@@ -36,7 +43,7 @@ if ($conn->connect_error) {
         }
         $_SESSION['login_error'] = 'Incorrect email or password';
         $_SESSION['active'] = 'seccefuly login';
-        header("Location: admin.php");
+        header("Location: index.php?error");
         exit();
     }
 }
