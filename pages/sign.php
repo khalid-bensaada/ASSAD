@@ -16,9 +16,17 @@ if ($conn->connect_error) {
 if (isset($_POST['sign'])) {
     $name = $_POST["username"];
     $email = $_POST["email"];
-    $password = password_hash($_POST["password"],PASSWORD_DEFAULT);
+    $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
     $role = $_POST["role"];
 
+    $pattern_email = "/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/";
+
+    if (!preg_match($pattern_email, $email)) {
+        $erreurs['email_error'] = "L'adresse email n'est pas valide (format attendu: nom@exemple.com).";
+    }
+    if (strlen($password) < 6) {
+        $erreurs['password_error'] = "Le mot de passe doit faire au moins 6 caractères.";
+    }
     $check = $conn->query("SELECT email FROM assad_users WHERE email ='$email");
     if ($check->num_rows > 0) {
         $_SESSION['sign_error'] = 'Email is already signed';
@@ -27,7 +35,7 @@ if (isset($_POST['sign'])) {
         $conn->query("INSERT INTO assad_users (username,email,user_role,password_hash) VALUES ('$name,$email,$role,$password')");
     }
 
-    header("Location: login.php");
+    header("Location: sign.php");
     exit();
 }
 
