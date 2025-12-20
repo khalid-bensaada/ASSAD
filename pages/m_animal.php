@@ -1,4 +1,42 @@
-<!DOCTYPE html>
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "assad";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $nom = $_POST['nam'];
+    $type = $_POST['food'];
+    $habitat = intval($_POST['habitats']);
+
+    if (isset($_FILES['img']) && $_FILES['img']['name'] != "") {
+        $image = $_FILES['img']['name'];
+        move_uploaded_file($_FILES['img']['tmp_name'], "images/" . $image);
+    } else {
+        $image = "";
+    }
+
+    $stmt = $conn->prepare("INSERT INTO Animal (name_animal, alimentation, image, id_habitat) 
+                            VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("sssi", $nom, $type, $image, $habitat);
+    $stmt->execute();
+}
+
+
+$sql = "SELECT a.ID, a.name_animal, a.alimentation, a.image, h.hab_name AS hab_name
+        FROM animaux a
+        LEFT JOIN habitats_assad h ON a.id_habitat = h.id_hab
+        ORDER BY a.name_animal ASC";
+
+$result = mysqli_query($conn, $sql);
+
+?><!DOCTYPE html>
 
 <html class="light" lang="en">
 
@@ -73,12 +111,12 @@
             <div class="flex flex-1 justify-end gap-8">
                 <div class="hidden md:flex items-center gap-9">
                     <a class="text-text-main dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary transition-colors"
-                        href="#">Dashboard</a>
-                    <a class="text-primary text-sm font-bold leading-normal" href="#">Animals</a>
+                        href="admin.php">Dashboard</a>
+                    <a class="text-primary text-sm font-bold leading-normal" href="m_animal.php">Animals</a>
                     <a class="text-text-main dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary transition-colors"
-                        href="#">Habitats</a>
+                        href="m_habitat.php">Habitats</a>
                     <a class="text-text-main dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary transition-colors"
-                        href="#">Staff</a>
+                        href="m_users.php">Users</a>
                 </div>
                 <div class="flex items-center gap-4">
                     <button
@@ -382,6 +420,111 @@
                             </div>
                         </div>
                     </div>
+                    <div id="addAnimalForm"
+                        class="hidden relative flex min-h-screen w-full flex-col items-center justify-center bg-background-light dark:bg-background-dark p-4 sm:p-6 lg:p-8"
+                        style='font-family: Lexend, "Noto Sans", sans-serif;'>
+                        <form method="POST" action="" enctype="multipart/form-data">
+                            <div
+                                class="absolute inset-0 z-0 bg-[url('https://images.unsplash.com/photo-1516912481808-3406841bd33c?q=80&amp;w=2148&amp;auto=format&amp;fit=crop')] bg-cover bg-center opacity-30 dark:opacity-20">
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-background-light/50 dark:bg-background-dark/70 backdrop-blur-sm z-0">
+                            </div>
+                            <!-- Modal -->
+                            <div
+                                class="relative z-10 w-full max-w-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 font-display">
+                                <div class="p-6 sm:p-8">
+                                    <!-- Modal Header -->
+                                    <div
+                                        class="flex items-start justify-between pb-4 border-b border-gray-200 dark:border-gray-700">
+                                        <h2
+                                            class="text-[#131811] dark:text-gray-100 tracking-light text-2xl font-bold leading-tight">
+                                            Add
+                                            New
+                                            Animal
+                                        </h2>
+                                        <button id="closeForm"
+                                            class="text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition-colors">
+                                            <span class="material-symbols-outlined">close</span>
+                                        </button>
+                                    </div>
+                                    <!-- Modal Body/Form -->
+                                    <div class="mt-6 space-y-6">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
+                                            <!-- Left Column -->
+                                            <div class="flex flex-col gap-6">
+                                                <!-- Animal's Name -->
+                                                <label class="flex flex-col w-full">
+                                                    <p
+                                                        class="text-[#131811] dark:text-gray-200 text-base font-medium leading-normal pb-2">
+                                                        Animal's
+                                                        Name
+                                                    </p>
+                                                    <input name="nam" id="animalName"
+                                                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#131811] dark:text-gray-200 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#dfe6db] dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 placeholder:text-[#6f8961] dark:placeholder:text-gray-400 p-3 text-base font-normal leading-normal"
+                                                        placeholder="e.g., Leo the Lion" value="" />
+                                                </label>
+                                                <!-- Favorite Food -->
+                                                <label class="flex flex-col w-full">
+                                                    <p
+                                                        class="text-[#131811] dark:text-gray-200 text-base font-medium leading-normal pb-2">
+                                                        Favorite
+                                                        Food
+                                                    </p>
+                                                    <select name="food" id="animalFood"
+                                                        class="form-select flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#131811] dark:text-gray-200 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#dfe6db] dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 p-3 text-base font-normal leading-normal">
+                                                        <option value="">Select a food type</option>
+                                                        <option value="Carnivore">Carnivore</option>
+                                                        <option value="Herbivore">Herbivore</option>
+                                                        <option value="Omnivore">Omnivore</option>
+
+                                                    </select>
+                                                </label>
+                                                <!-- Habitat -->
+                                                <label class="flex flex-col w-full">
+                                                    <p
+                                                        class="text-[#131811] dark:text-gray-200 text-base font-medium leading-normal pb-2">
+                                                        Habitat
+                                                    </p>
+                                                    <select name="habitats" id="animalHabitat"
+                                                        class="form-select flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#131811] dark:text-gray-200 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#dfe6db] dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 p-3 text-base font-normal leading-normal">
+                                                        <option value="1">Jungle</option>
+                                                        <option value="2">Savannah</option>
+                                                        <option value="3">Arctic</option>
+                                                        <option value="4">Ocean</option>
+
+                                                    </select>
+                                                </label>
+                                                <!-- Image URL -->
+                                                <label class="flex flex-col w-full">
+                                                    <p
+                                                        class="text-[#131811] dark:text-gray-200 text-base font-medium leading-normal pb-2">
+                                                        Image
+                                                        URL
+                                                    </p>
+                                                    <input type="file" name="img" id="animalImage"
+                                                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#131811] dark:text-gray-200 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#dfe6db] dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 placeholder:text-[#6f8961] dark:placeholder:text-gray-400 p-3 text-base font-normal leading-normal"
+                                                        placeholder="Enter image URL here" />
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Modal Footer -->
+                                    <div
+                                        class="flex justify-end items-center gap-4 pt-6 mt-6 border-t border-gray-200 dark:border-gray-700">
+                                        <button id="cancelAnimal"
+                                            class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-11 px-6 bg-transparent text-gray-700 dark:text-gray-300 text-base font-bold leading-normal tracking-wide hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
+                                            <span class="truncate">Cancel</span>
+                                        </button>
+                                        <button
+                                            class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-11 px-6 bg-primary text-background-dark text-base font-bold leading-normal tracking-wide shadow-sm hover:brightness-110 transition-all">
+                                            <span class="truncate">Save Animal</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                     <!-- Pagination -->
                     <div class="flex items-center justify-between px-4 py-6">
                         <div class="text-sm text-text-secondary">
@@ -419,6 +562,24 @@
             </div>
         </div>
     </div>
+    <script>
+        const addAnimalBtn = document.getElementById('addAnimalBtn');
+        const addAnimalForm = document.getElementById('addAnimalForm');
+        const cancelAnimal = document.getElementById('cancelAnimal');
+        const closeForm = document.getElementById('closeForm');
+        const animalGrid = document.getElementById('animalGrid');
+
+        // Show form above animal grid
+        addAnimalBtn.addEventListener('click', () => {
+            addAnimalForm.classList.remove('hidden');
+            addAnimalForm.scrollIntoView({ behavior: "smooth" });
+        });
+
+        // Hide form
+        cancelAnimal.addEventListener('click', () => addAnimalForm.classList.add('hidden'));
+        closeForm.addEventListener('click', () => addAnimalForm.classList.add('hidden'));
+
+    </script>
 </body>
 
 </html>

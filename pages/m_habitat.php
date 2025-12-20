@@ -56,12 +56,12 @@
             </div>
             <nav class="hidden md:flex items-center gap-8">
                 <a class="text-sm font-medium hover:text-primary transition-colors text-gray-600 dark:text-gray-300"
-                    href="#">Dashboard</a>
+                    href="admin.php">Dashboard</a>
                 <a class="text-sm font-medium hover:text-primary transition-colors text-gray-600 dark:text-gray-300"
-                    href="#">Animals</a>
-                <a class="text-sm font-medium text-primary font-bold" href="#">Habitats</a>
+                    href="m_animal.php">Animals</a>
+                <a class="text-sm font-medium text-primary font-bold" href="m_habitat.php">Habitats</a>
                 <a class="text-sm font-medium hover:text-primary transition-colors text-gray-600 dark:text-gray-300"
-                    href="#">Staff</a>
+                    href="m_users.php">Users</a>
             </nav>
             <div class="flex items-center gap-4">
                 <button class="md:hidden text-gray-600 dark:text-gray-300">

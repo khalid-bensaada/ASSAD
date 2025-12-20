@@ -1,42 +1,4 @@
-<?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "zoo";
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nom = $_POST['nam'];
-    $type = $_POST['food'];
-    $habitat = intval($_POST['habitats']);
-
-    if (isset($_FILES['img']) && $_FILES['img']['name'] != "") {
-        $image = $_FILES['img']['name'];
-        move_uploaded_file($_FILES['img']['tmp_name'], "images/" . $image);
-    } else {
-        $image = "";
-    }
-
-    $stmt = $conn->prepare("INSERT INTO Animal (Name_animal, Type_food, Image_animal, Habitat_ID) 
-                            VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("sssi", $nom, $type, $image, $habitat);
-    $stmt->execute();
-}
-
-
-$sql = "SELECT a.ID, a.Name_animal, a.Type_food, a.Image_animal, h.Name_Hab AS habitat_name
-        FROM Animal a
-        LEFT JOIN habitats h ON a.Habitat_ID = h.ID_Hab
-        ORDER BY a.Name_animal ASC";
-
-$result = mysqli_query($conn, $sql);
-
-?>
 
 <!DOCTYPE html>
 
@@ -440,7 +402,9 @@ $result = mysqli_query($conn, $sql);
                     </div>
                 </div>
             </div>
+            
         </div>
+
     </main>
     <!-- Footer -->
     <footer class="border-t border-gray-200 bg-background-light dark:border-[#29382f] dark:bg-background-dark">
@@ -489,6 +453,7 @@ $result = mysqli_query($conn, $sql);
             </div>
         </div>
     </footer>
+    
 </body>
 
 </html>

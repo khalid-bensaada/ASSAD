@@ -27,7 +27,7 @@ CREATE TABLE habitats_assad (
 CREATE TABLE animaux (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name_animal VARCHAR(100) NOT NULL,
-    type_animal VARCHAR(100),
+    
     alimentation VARCHAR(100),
     image VARCHAR(255),
     live VARCHAR(100),

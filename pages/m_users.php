@@ -64,14 +64,14 @@
             <div class="hidden md:flex items-center gap-8">
                 <nav class="flex items-center gap-6">
                     <a class="text-text-main dark:text-gray-200 text-sm font-medium hover:text-primary transition-colors"
-                        href="#">Dashboard</a>
+                        href="admin.php">Dashboard</a>
                     <a class="text-text-main dark:text-gray-200 text-sm font-medium hover:text-primary transition-colors"
-                        href="#">Animals</a>
+                        href="m_animal.php">Animals</a>
                     <a class="text-text-main dark:text-gray-200 text-sm font-medium hover:text-primary transition-colors"
-                        href="#">Tickets</a>
-                    <a class="text-primary text-sm font-bold border-b-2 border-primary py-1" href="#">Staff</a>
+                        href="m_habitats.php">Habitats</a>
+                    
                     <a class="text-text-main dark:text-gray-200 text-sm font-medium hover:text-primary transition-colors"
-                        href="#">Settings</a>
+                        href="m_users.php">Users</a>
                 </nav>
             </div>
             <div class="flex items-center gap-4">

@@ -39,6 +39,8 @@ if ($conn->connect_error) {
             $actif = 1;
             if ($role === 'guide') {
                 $actif = 0;
+            }elseif($role === 'guide'){
+                $actif = 1;
             }
             $stmt->bind_param('sssis', $name, $email,$role,$password,   $actif);
             $stmt->execute();

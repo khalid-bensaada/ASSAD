@@ -19,10 +19,10 @@ if ($conn->connect_error) {
         $result = $conn->query("SELECT * FROM assad_users WHERE email = '$email'");
         if ($result->num_rows > 0) {
             $user = $result->fetch_assoc();
-            
+
             if ($user['user_role'] === 'admin') {
-                $password_bd_hash = password_hash($user['password_hash'],PASSWORD_DEFAULT);
-                
+                $password_bd_hash = password_hash($user['password_hash'], PASSWORD_DEFAULT);
+
             } else {
                 $password_bd_hash = $user['password_hash'];
             }
@@ -40,11 +40,13 @@ if ($conn->connect_error) {
                 exit();
             }
 
+        } else {
+            $_SESSION['login_error'] = 'Incorrect email or password';
+            $_SESSION['active'] = 'seccefuly login';
+            header("Location: login.php");
+            exit();
         }
-        $_SESSION['login_error'] = 'Incorrect email or password';
-        $_SESSION['active'] = 'seccefuly login';
-        header("Location: login.php");
-        exit();
+
     }
 }
 
