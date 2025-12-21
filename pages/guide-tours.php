@@ -1,3 +1,89 @@
+<?php
+require_once "../middleware/auth.php";
+require_once "../config/db.php";
+
+
+if ($_SESSION["role"] !== "guide") {
+    die("Access denied");
+}
+
+$guide_id = $_SESSION["user_id"];
+
+
+if (isset($_POST["add_tour"])) {
+    $title = $_POST["title"];
+    $date = $_POST["date"];
+    $duration = $_POST["duration"];
+    $price = $_POST["price"];
+    $language = $_POST["language"];
+    $capacity = $_POST["capacity"];
+
+    $stmt = $conn->prepare(
+        "INSERT INTO visitesguidees 
+        (titre, dateheure, duree, prix, langue, capacite_max, statut, id_guide)
+        VALUES (?, ?, ?, ?, ?, ?, 'active', ?)"
+    );
+    $stmt->bind_param(
+        "ssidsii",
+        $title,
+        $date,
+        $duration,
+        $price,
+        $language,
+        $capacity,
+        $guide_id
+    );
+    $stmt->execute();
+}
+
+
+if (isset($_POST["update_tour"])) {
+    $id = $_POST["tour_id"];
+    $title = $_POST["title"];
+    $date = $_POST["date"];
+    $duration = $_POST["duration"];
+    $price = $_POST["price"];
+    $language = $_POST["language"];
+    $capacity = $_POST["capacity"];
+
+    $stmt = $conn->prepare(
+        "UPDATE visitesguidees 
+         SET titre=?, dateheure=?, duree=?, prix=?, langue=?, capacite_max=?
+         WHERE id=? AND id_guide=?"
+    );
+    $stmt->bind_param(
+        "ssidsiii",
+        $title,
+        $date,
+        $duration,
+        $price,
+        $language,
+        $capacity,
+        $id,
+        $guide_id
+    );
+    $stmt->execute();
+}
+
+
+if (isset($_GET["delete"])) {
+    $id = $_GET["delete"];
+
+    $stmt = $conn->prepare(
+        "DELETE FROM visitesguidees WHERE id=? AND id_guide=?"
+    );
+    $stmt->bind_param("ii", $id, $guide_id);
+    $stmt->execute();
+}
+
+
+$stmt = $conn->prepare(
+    "SELECT * FROM visitesguidees WHERE id_guide=? ORDER BY dateheure DESC"
+);
+$stmt->bind_param("i", $guide_id);
+$stmt->execute();
+$tours = $stmt->get_result();
+?>
 <!DOCTYPE html>
 
 <html class="light" lang="en">

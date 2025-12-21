@@ -1,4 +1,22 @@
+<?php
 
+$conn = new mysqli("localhost", "root", "", "assad");
+
+if ($conn->connect_error) {
+    die("Database connection failed");
+}
+session_start();
+
+if (!isset($_SESSION["user_id"])) {
+    header("Location: login.php");
+    exit;
+}
+$sql = "SELECT animaux.*, habitats_assad.hab_name AS habitat
+        FROM animaux
+        JOIN habitats_assad ON animaux.id_habitat = habitats.id";
+
+$animals = $conn->query($sql);
+?>
 
 <!DOCTYPE html>
 
@@ -402,7 +420,7 @@
                     </div>
                 </div>
             </div>
-            
+
         </div>
 
     </main>
@@ -453,7 +471,7 @@
             </div>
         </div>
     </footer>
-    
+
 </body>
 
 </html>

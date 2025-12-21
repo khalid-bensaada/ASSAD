@@ -420,6 +420,8 @@ $result = mysqli_query($conn, $sql);
                             </div>
                         </div>
                     </div>
+
+                    <!-- Formula of add animal -->
                     <div id="addAnimalForm"
                         class="hidden relative flex min-h-screen w-full flex-col items-center justify-center bg-background-light dark:bg-background-dark p-4 sm:p-6 lg:p-8"
                         style='font-family: Lexend, "Noto Sans", sans-serif;'>

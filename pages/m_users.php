@@ -1,3 +1,29 @@
+<?php
+
+$conn = new mysqli("localhost", "root", "", "assad");
+
+if ($conn->connect_error) {
+    die("Database connection failed");
+}
+session_start();
+
+if (!isset($_SESSION["user_id"])) {
+    header("Location: login.php");
+    exit;
+}
+
+$result = $conn->query("SELECT * FROM assad_users");
+
+if (isset($_GET["approve"])) {
+    $id = $_GET["approve"];
+    $conn->query("UPDATE assad_users SET actif ='approved' WHERE id=$id");
+}
+
+if (isset($_GET["disable"])) {
+    $id = $_GET["disable"];
+    $conn->query("UPDATE utilisateurs SET status='inactive' WHERE id=$id");
+}
+?>
 <!DOCTYPE html>
 
 <html class="light" lang="en">
@@ -69,7 +95,7 @@
                         href="m_animal.php">Animals</a>
                     <a class="text-text-main dark:text-gray-200 text-sm font-medium hover:text-primary transition-colors"
                         href="m_habitats.php">Habitats</a>
-                    
+
                     <a class="text-text-main dark:text-gray-200 text-sm font-medium hover:text-primary transition-colors"
                         href="m_users.php">Users</a>
                 </nav>

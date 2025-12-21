@@ -1,3 +1,28 @@
+<?php
+
+$conn = new mysqli("localhost", "root", "", "assad");
+
+if ($conn->connect_error) {
+    die("Database connection failed");
+}
+session_start();
+
+if (!isset($_SESSION["user_id"])) {
+    header("Location: login.php");
+    exit;
+}
+
+$id = $_GET["id"];
+
+$sql = "
+SELECT animaux.*, habitats.nom AS habitat
+FROM animaux
+JOIN habitats ON animaux.id_habitat = habitats.id
+WHERE animaux.id = $id
+";
+
+$animal = $conn->query($sql)->fetch_assoc();
+?>
 <!DOCTYPE html>
 
 <html class="dark" lang="en">

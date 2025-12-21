@@ -1,3 +1,38 @@
+<?php
+
+$conn = new mysqli("localhost", "root", "", "assad");
+
+if ($conn->connect_error) {
+    die("Database connection failed");
+}
+session_start();
+
+if (!isset($_SESSION["user_id"])) {
+    header("Location: login.php");
+    exit;
+}
+
+if (isset($_POST["add"])) {
+    $name = $_POST["name"];
+    $climate = $_POST["climate"];
+    $zone = $_POST["zone"];
+    $desc = $_POST["description"];
+
+    $stmt = $conn->prepare(
+        "INSERT INTO habitats (nom, typeclimat, zonezoo, description)
+         VALUES (?, ?, ?, ?)"
+    );
+    $stmt->bind_param("ssss", $name, $climate, $zone, $desc);
+    $stmt->execute();
+}
+
+if (isset($_GET["delete"])) {
+    $id = $_GET["delete"];
+    $conn->query("DELETE FROM habitats WHERE id=$id");
+}
+
+$habitats = $conn->query("SELECT * FROM habitats");
+?>
 <!DOCTYPE html>
 
 <html class="light" lang="en">

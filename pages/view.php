@@ -1,3 +1,39 @@
+<?php
+
+$conn = new mysqli("localhost", "root", "", "assad");
+
+if ($conn->connect_error) {
+    die("Database connection failed");
+}
+session_start();
+
+if (!isset($_SESSION["user_id"])) {
+    header("Location: login.php");
+    exit;
+}
+
+$user_id = $_SESSION["user_id"];
+$visit_id = $_GET["visit_id"];
+
+if (isset($_POST["add"])) {
+    $note = $_POST["note"];
+    $text = $_POST["text"];
+
+    $stmt = $conn->prepare(
+        "INSERT INTO commentaires (idvisitesguides, idutilisateur, note, texte, date_commentaire)
+         VALUES (?, ?, ?, ?, NOW())"
+    );
+    $stmt->bind_param("iiis", $visit_id, $user_id, $note, $text);
+    $stmt->execute();
+}
+
+$comments = $conn->query(
+    "SELECT c.*, u.name
+     FROM commentaires c
+     JOIN utilisateurs u ON c.idutilisateur = u.id
+     WHERE c.idvisitesguides = $visit_id"
+);
+?>
 <!DOCTYPE html>
 
 <html class="light" lang="en">

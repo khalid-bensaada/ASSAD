@@ -1,3 +1,34 @@
+<?php
+
+$conn = new mysqli("localhost", "root", "", "assad");
+
+if ($conn->connect_error) {
+    die("Database connection failed");
+}
+session_start();
+
+if (!isset($_SESSION["user_id"])) {
+    header("Location: login.php");
+    exit;
+}
+
+$user_id = $_SESSION["user_id"];
+
+if (isset($_POST["book"])) {
+    $visit = $_POST["visit_id"];
+    $nb    = $_POST["persons"];
+
+    $stmt = $conn->prepare(
+        "INSERT INTO reservations (idvisite, idutilisateur, nbpersonnes, datereservation)
+         VALUES (?, ?, ?, NOW())"
+    );
+    $stmt->bind_param("iii", $visit, $user_id, $nb);
+    $stmt->execute();
+}
+
+$tours = $conn->query("SELECT * FROM visitesguidees WHERE statut='active'");
+
+?>
 <!DOCTYPE html>
 
 <html class="dark" lang="en">
